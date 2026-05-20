@@ -1,0 +1,2119 @@
+<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Apex 現代化電商後台管理系統 (單一 HTML 預覽版)</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap Icons CDN for easy static icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- React and Babel CDNs -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+      /* 現代化設計系統與變數定義 */
+      :root {
+        --bg-primary: #080c14;
+        --bg-secondary: rgba(17, 24, 39, 0.75);
+        --bg-sidebar: #0b0f19;
+        --bg-sidebar-hover: rgba(59, 130, 246, 0.1);
+        --border-color: rgba(255, 255, 255, 0.08);
+        --text-primary: #f3f4f6;
+        --text-secondary: #9ca3af;
+        --text-muted: #6b7280;
+        
+        --accent-color: #3b82f6;
+        --accent-light: #60a5fa;
+        --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        --accent-gradient-hover: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+        
+        --success: #10b981;
+        --success-bg: rgba(16, 185, 129, 0.15);
+        --success-border: rgba(16, 185, 129, 0.3);
+        
+        --warning: #f59e0b;
+        --warning-bg: rgba(245, 158, 11, 0.15);
+        --warning-border: rgba(245, 158, 11, 0.3);
+        
+        --danger: #ef4444;
+        --danger-bg: rgba(239, 68, 68, 0.15);
+        --danger-border: rgba(239, 68, 68, 0.3);
+        
+        --info: #06b6d4;
+        --info-bg: rgba(6, 182, 212, 0.15);
+        --info-border: rgba(6, 182, 212, 0.3);
+
+        --glass-blur: blur(16px);
+        --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        --sidebar-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
+        --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --border-radius-lg: 16px;
+        --border-radius-md: 12px;
+        --border-radius-sm: 8px;
+      }
+
+      :root.light-theme {
+        --bg-primary: #f8fafc;
+        --bg-secondary: rgba(255, 255, 255, 0.85);
+        --bg-sidebar: #0f172a;
+        --bg-sidebar-hover: rgba(59, 130, 246, 0.15);
+        --border-color: rgba(0, 0, 0, 0.08);
+        --text-primary: #0f172a;
+        --text-secondary: #475569;
+        --text-muted: #94a3b8;
+        
+        --accent-color: #2563eb;
+        --accent-light: #3b82f6;
+        --accent-gradient: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+        --accent-gradient-hover: linear-gradient(135deg, #1d4ed8 0%, #6d28d9 100%);
+        
+        --success: #059669;
+        --success-bg: rgba(5, 150, 105, 0.1);
+        --success-border: rgba(5, 150, 105, 0.2);
+        
+        --warning: #d97706;
+        --warning-bg: rgba(217, 119, 6, 0.1);
+        --warning-border: rgba(217, 119, 6, 0.2);
+        
+        --danger: #dc2626;
+        --danger-bg: rgba(220, 38, 38, 0.1);
+        --danger-border: rgba(220, 38, 38, 0.2);
+        
+        --info: #0891b2;
+        --info-bg: rgba(8, 145, 178, 0.1);
+        --info-border: rgba(8, 145, 178, 0.2);
+
+        --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -5px rgba(0, 0, 0, 0.03);
+        --sidebar-shadow: 4px 0 20px rgba(15, 23, 42, 0.15);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Outfit', 'Inter', 'Noto Sans TC', sans-serif;
+      }
+
+      body {
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg-primary);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--text-muted);
+      }
+
+      .app-container {
+        display: flex;
+        min-height: 100vh;
+        position: relative;
+      }
+
+      .sidebar {
+        width: 260px;
+        background-color: var(--bg-sidebar);
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: var(--sidebar-shadow);
+        transition: var(--transition-smooth);
+      }
+
+      .sidebar.collapsed {
+        width: 80px;
+      }
+
+      .sidebar-brand {
+        height: 70px;
+        display: flex;
+        align-items: center;
+        padding: 0 24px;
+        border-bottom: 1px solid var(--border-color);
+        gap: 12px;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      .brand-icon {
+        background: var(--accent-gradient);
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: var(--border-radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 20px;
+        flex-shrink: 0;
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+      }
+
+      .brand-name {
+        font-size: 20px;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: 0.5px;
+        transition: opacity 0.2s ease;
+      }
+
+      .sidebar.collapsed .brand-name {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .sidebar-menu {
+        list-style: none;
+        padding: 24px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        flex-grow: 1;
+      }
+
+      .menu-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        color: var(--text-secondary);
+        border-radius: var(--border-radius-sm);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: 500;
+        gap: 16px;
+        transition: var(--transition-smooth);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .menu-item i {
+        font-size: 18px;
+        width: 20px;
+        display: flex;
+        justify-content: center;
+      }
+
+      .menu-text {
+        font-size: 14px;
+        transition: opacity 0.2s ease;
+      }
+
+      .sidebar.collapsed .menu-text {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .menu-item:hover {
+        color: var(--text-primary);
+        background-color: var(--bg-sidebar-hover);
+      }
+
+      .menu-item.active {
+        color: white;
+        background: var(--accent-gradient);
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.25);
+      }
+
+      .menu-item.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 4px;
+        background-color: white;
+      }
+
+      .sidebar-footer {
+        padding: 16px;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .collapse-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition-smooth);
+      }
+
+      .collapse-btn:hover {
+        background-color: var(--border-color);
+        color: var(--text-primary);
+      }
+
+      .main-wrapper {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      .navbar {
+        height: 70px;
+        background-color: var(--bg-secondary);
+        backdrop-filter: var(--glass-blur);
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 32px;
+        position: sticky;
+        top: 0;
+        z-index: 90;
+        transition: var(--transition-smooth);
+      }
+
+      .navbar-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .page-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .search-bar {
+        display: flex;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius-sm);
+        padding: 8px 16px;
+        width: 300px;
+        gap: 12px;
+        transition: var(--transition-smooth);
+      }
+
+      .light-theme .search-bar {
+        background-color: #f1f5f9;
+      }
+
+      .search-bar:focus-within {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+      }
+
+      .search-bar input {
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--text-primary);
+        width: 100%;
+        font-size: 14px;
+      }
+
+      .search-bar input::placeholder {
+        color: var(--text-muted);
+      }
+
+      .navbar-right {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .nav-action-btn {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transition: var(--transition-smooth);
+      }
+
+      .nav-action-btn:hover {
+        background-color: var(--border-color);
+        color: var(--text-primary);
+        transform: translateY(-2px);
+      }
+
+      .badge-dot {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        width: 8px;
+        height: 8px;
+        background-color: var(--danger);
+        border-radius: 50%;
+        border: 2px solid var(--bg-sidebar);
+      }
+
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-left: 16px;
+        border-left: 1px solid var(--border-color);
+      }
+
+      .user-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--accent-color);
+        background: #1e293b;
+      }
+
+      .user-info {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .user-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .user-role {
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+
+      .content-container {
+        padding: 32px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+      }
+
+      .dashboard-card {
+        background-color: var(--bg-secondary);
+        backdrop-filter: var(--glass-blur);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius-lg);
+        padding: 24px;
+        box-shadow: var(--card-shadow);
+        transition: var(--transition-smooth);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .dashboard-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .light-theme .dashboard-card:hover {
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 24px;
+      }
+
+      .stat-card-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .stat-info {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .stat-label {
+        font-size: 14px;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text-primary);
+        font-family: 'Outfit', sans-serif;
+        letter-spacing: -0.5px;
+      }
+
+      .stat-change {
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 600;
+        gap: 4px;
+        margin-top: 4px;
+      }
+
+      .stat-change.up {
+        color: var(--success);
+      }
+
+      .stat-change.down {
+        color: var(--danger);
+      }
+
+      .stat-icon-box {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--border-radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+      }
+
+      .stat-card-glow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: var(--accent-gradient);
+      }
+
+      .charts-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+      }
+
+      @media (max-width: 1024px) {
+        .charts-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+
+      .card-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .chart-container {
+        position: relative;
+        width: 100%;
+        height: 280px;
+      }
+
+      .chart-svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .chart-path-area {
+        fill: url(#chart-gradient);
+        opacity: 0.15;
+      }
+
+      .chart-path-line {
+        fill: none;
+        stroke: var(--accent-color);
+        stroke-width: 3;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .chart-grid-line {
+        stroke: var(--border-color);
+        stroke-width: 1;
+        stroke-dasharray: 4;
+      }
+
+      .chart-dot {
+        fill: var(--bg-sidebar);
+        stroke: var(--accent-color);
+        stroke-width: 3;
+        cursor: pointer;
+        transition: r 0.2s ease, stroke-width 0.2s ease;
+      }
+
+      .chart-dot:hover {
+        r: 7;
+        stroke-width: 4;
+      }
+
+      .donut-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 200px;
+        position: relative;
+      }
+
+      .donut-svg {
+        transform: rotate(-90deg);
+        width: 150px;
+        height: 150px;
+      }
+
+      .donut-track {
+        fill: none;
+        stroke: var(--border-color);
+        stroke-width: 12;
+      }
+
+      .donut-segment {
+        fill: none;
+        stroke-width: 12;
+        stroke-linecap: round;
+      }
+
+      .donut-center-text {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .donut-center-val {
+        font-size: 24px;
+        font-weight: 800;
+        font-family: 'Outfit', sans-serif;
+        color: var(--text-primary);
+      }
+
+      .donut-center-lbl {
+        font-size: 11px;
+        color: var(--text-secondary);
+        margin-top: 2px;
+      }
+
+      .donut-legend {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        width: 100%;
+        margin-top: 16px;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+
+      .legend-color {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+
+      .chart-tooltip {
+        position: absolute;
+        background-color: rgba(15, 23, 42, 0.95);
+        border: 1px solid var(--accent-light);
+        border-radius: var(--border-radius-sm);
+        padding: 8px 12px;
+        color: white;
+        font-size: 12px;
+        pointer-events: none;
+        z-index: 10;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        transform: translate(-50%, -100%) translateY(-10px);
+        transition: opacity 0.2s ease, left 0.1s ease, top 0.1s ease;
+        white-space: nowrap;
+      }
+
+      .tooltip-title {
+        font-weight: 700;
+        margin-bottom: 2px;
+        color: var(--text-secondary);
+      }
+
+      .tooltip-value {
+        font-size: 14px;
+        font-weight: 800;
+        color: var(--accent-light);
+      }
+
+      .filter-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        padding: 16px 24px;
+        border-radius: var(--border-radius-md);
+      }
+
+      .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .filter-label {
+        font-size: 14px;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      .filter-select {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius-sm);
+        padding: 8px 12px;
+        color: var(--text-primary);
+        font-size: 14px;
+        outline: none;
+        cursor: pointer;
+        transition: var(--transition-smooth);
+      }
+
+      .light-theme .filter-select {
+        background-color: #ffffff;
+      }
+
+      .filter-select:hover, .filter-select:focus {
+        border-color: var(--accent-color);
+      }
+
+      .table-wrapper {
+        overflow-x: auto;
+        width: 100%;
+      }
+
+      .custom-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+      }
+
+      .custom-table th {
+        padding: 16px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        border-bottom: 1px solid var(--border-color);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .custom-table td {
+        padding: 16px;
+        font-size: 14px;
+        color: var(--text-primary);
+        border-bottom: 1px solid var(--border-color);
+        vertical-align: middle;
+      }
+
+      .custom-table tbody tr {
+        transition: var(--transition-smooth);
+      }
+
+      .custom-table tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.02);
+      }
+
+      .light-theme .custom-table tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.01);
+      }
+
+      .order-id {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        color: var(--accent-light);
+      }
+
+      .customer-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .customer-avatar-txt {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--accent-gradient);
+        color: white;
+        font-weight: 600;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 50px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1px solid transparent;
+      }
+
+      .status-badge.pending {
+        background-color: var(--warning-bg);
+        color: var(--warning);
+        border-color: var(--warning-border);
+      }
+
+      .status-badge.shipping {
+        background-color: var(--info-bg);
+        color: var(--info);
+        border-color: var(--info-border);
+      }
+
+      .status-badge.shipped {
+        background-color: var(--success-bg);
+        color: var(--success);
+        border-color: var(--success-border);
+      }
+
+      .status-badge.cancelled {
+        background-color: var(--danger-bg);
+        color: var(--danger);
+        border-color: var(--danger-border);
+      }
+
+      .badge-pulse {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      .status-badge.pending .badge-pulse {
+        background-color: var(--warning);
+        animation: pulse-yellow 2s infinite;
+      }
+
+      .status-badge.shipping .badge-pulse {
+        background-color: var(--info);
+        animation: pulse-cyan 2s infinite;
+      }
+
+      .status-badge.shipped .badge-pulse {
+        background-color: var(--success);
+      }
+
+      .status-badge.cancelled .badge-pulse {
+        background-color: var(--danger);
+      }
+
+      @keyframes pulse-yellow {
+        0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+        100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+      }
+
+      @keyframes pulse-cyan {
+        0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(6, 182, 212, 0); }
+        100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
+      }
+
+      .payment-indicator {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 500;
+      }
+
+      .payment-indicator.paid {
+        color: var(--success);
+      }
+
+      .payment-indicator.unpaid {
+        color: var(--warning);
+      }
+
+      .payment-indicator.refunded {
+        color: var(--danger);
+      }
+
+      .action-btn {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        padding: 6px 12px;
+        border-radius: var(--border-radius-sm);
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: var(--transition-smooth);
+      }
+
+      .light-theme .action-btn {
+        background-color: #f1f5f9;
+      }
+
+      .action-btn:hover {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+        color: white;
+      }
+
+      .btn-primary {
+        background: var(--accent-gradient);
+        border: none;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+      }
+
+      .btn-primary:hover {
+        background: var(--accent-gradient-hover);
+        transform: translateY(-1px);
+      }
+
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        animation: fade-in 0.25s ease-out;
+      }
+
+      .modal-content {
+        background-color: var(--bg-sidebar);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius-lg);
+        width: 500px;
+        max-width: 90%;
+        padding: 32px;
+        box-shadow: var(--card-shadow);
+        position: relative;
+        animation: slide-up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        transition: var(--transition-smooth);
+      }
+
+      .modal-close:hover {
+        background-color: var(--border-color);
+        color: var(--text-primary);
+      }
+
+      .modal-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 24px;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .modal-body {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .modal-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .modal-field label {
+        font-size: 13px;
+        color: var(--text-secondary);
+        font-weight: 600;
+      }
+
+      .modal-field select, .modal-field input {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius-sm);
+        padding: 10px 14px;
+        color: var(--text-primary);
+        font-size: 14px;
+        outline: none;
+        width: 100%;
+      }
+
+      .light-theme .modal-field select, .light-theme .modal-field input {
+        background-color: #f8fafc;
+      }
+
+      .modal-field select:focus, .modal-field input:focus {
+        border-color: var(--accent-color);
+      }
+
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 32px;
+        border-top: 1px solid var(--border-color);
+        padding-top: 20px;
+      }
+
+      @keyframes fade-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes slide-up {
+        from { transform: translateY(30px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+
+      .pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 24px;
+      }
+
+      .page-info {
+        font-size: 13px;
+        color: var(--text-secondary);
+      }
+
+      .pagination-controls {
+        display: flex;
+        gap: 8px;
+      }
+
+      .pagination-btn {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        padding: 8px 16px;
+        border-radius: var(--border-radius-sm);
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 500;
+        transition: var(--transition-smooth);
+      }
+
+      .light-theme .pagination-btn {
+        background-color: #f1f5f9;
+      }
+
+      .pagination-btn:hover:not(:disabled) {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+        color: white;
+      }
+
+      .pagination-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      @media (max-width: 768px) {
+        .sidebar {
+          position: fixed;
+          height: 100vh;
+          left: -260px;
+          z-index: 1001;
+        }
+        
+        .sidebar.active {
+          left: 0;
+        }
+        
+        .app-container.sidebar-open .main-wrapper {
+          transform: translateX(260px);
+        }
+        
+        .search-bar {
+          display: none;
+        }
+        
+        .content-container {
+          padding: 16px;
+          gap: 16px;
+        }
+        
+        .navbar {
+          padding: 0 16px;
+        }
+        
+        .filter-bar {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 12px;
+          padding: 16px;
+        }
+        
+        .filter-group {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        
+        .filter-select {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      // --- 資料集 ---
+      const mockOrders = [
+        {
+          id: "ORD-1008",
+          customer: "陳冠宇",
+          email: "kuanyu.chen@example.com",
+          phone: "0912-345-678",
+          address: "台北市信義區忠孝東路五段 8 號",
+          date: "2026-05-20",
+          amount: 12800,
+          status: "pending",
+          payment: "unpaid",
+          items: [
+            { name: "Pro 級抗噪藍牙耳機", quantity: 1, price: 8800 },
+            { name: "PD 65W 雙孔極速充電器", quantity: 2, price: 2000 }
+          ]
+        },
+        {
+          id: "ORD-1007",
+          customer: "林美玲",
+          email: "meiling.lin@example.com",
+          phone: "0923-456-789",
+          address: "台中市西屯區台灣大道三段 99 號",
+          date: "2026-05-19",
+          amount: 4500,
+          status: "shipping",
+          payment: "paid",
+          items: [
+            { name: "人體工學記憶棉腰靠", quantity: 1, price: 1500 },
+            { name: "超靜音負離子空氣清淨機", quantity: 1, price: 3000 }
+          ]
+        },
+        {
+          id: "ORD-1006",
+          customer: "張志豪",
+          email: "zhihao.zhang@example.com",
+          phone: "0934-567-890",
+          address: "高雄市苓雅區五福一路 105 號",
+          date: "2026-05-19",
+          amount: 32000,
+          status: "shipped",
+          payment: "paid",
+          items: [
+            { name: "34 吋 2K 144Hz 曲面電競螢幕", quantity: 1, price: 18000 },
+            { name: "RGB 機械式熱插拔鍵盤", quantity: 2, price: 7000 }
+          ]
+        },
+        {
+          id: "ORD-1005",
+          customer: "王郁婷",
+          email: "yuting.wang@example.com",
+          phone: "0945-678-901",
+          address: "新北市板橋區縣民大道二段 7 號",
+          date: "2026-05-18",
+          amount: 1580,
+          status: "shipped",
+          payment: "paid",
+          items: [
+            { name: "防潑水多功能雙肩電腦包", quantity: 1, price: 1580 }
+          ]
+        },
+        {
+          id: "ORD-1004",
+          customer: "李建國",
+          email: "jianguo.li@example.com",
+          phone: "0956-789-012",
+          address: "桃園市中壢區中大路 300 號",
+          date: "2026-05-17",
+          amount: 8900,
+          status: "cancelled",
+          payment: "refunded",
+          items: [
+            { name: "多功能智能氣炸烤箱", quantity: 1, price: 8900 }
+          ]
+        },
+        {
+          id: "ORD-1003",
+          customer: "黃淑芬",
+          email: "shufen.huang@example.com",
+          phone: "0967-890-123",
+          address: "台南市東區大學路 1 號",
+          date: "2026-05-17",
+          amount: 6200,
+          status: "shipped",
+          payment: "paid",
+          items: [
+            { name: "極簡無印風實木邊桌", quantity: 1, price: 3800 },
+            { name: "手沖咖啡細口溫控壺", quantity: 1, price: 2400 }
+          ]
+        },
+        {
+          id: "ORD-1002",
+          customer: "楊智傑",
+          email: "zhijie.yang@example.com",
+          phone: "0978-901-234",
+          address: "新竹市東區光復路二段 101 號",
+          date: "2026-05-16",
+          amount: 21500,
+          status: "shipped",
+          payment: "paid",
+          items: [
+            { name: "人體工學高背網椅 (旗艦版)", quantity: 1, price: 16500 },
+            { name: "鋁合金雙螢幕支架", quantity: 1, price: 5000 }
+          ]
+        },
+        {
+          id: "ORD-1001",
+          customer: "許家豪",
+          email: "jiahao.xu@example.com",
+          phone: "0989-012-345",
+          address: "基隆市仁愛區愛三路 10 號",
+          date: "2026-05-15",
+          amount: 3200,
+          status: "shipped",
+          payment: "paid",
+          items: [
+            { name: "直立式人體工學滑鼠", quantity: 2, price: 1600 }
+          ]
+        }
+      ];
+
+      const mockSalesData = [
+        { date: "05/14", revenue: 48000, orders: 12 },
+        { date: "05/15", revenue: 52000, orders: 15 },
+        { date: "05/16", revenue: 78000, orders: 22 },
+        { date: "05/17", revenue: 61000, orders: 18 },
+        { date: "05/18", revenue: 95000, orders: 28 },
+        { date: "05/19", revenue: 112000, orders: 34 },
+        { date: "05/20", revenue: 135000, orders: 42 }
+      ];
+
+      const mockCategoryData = [
+        { name: "電腦周邊", value: 45, color: "#3b82f6" },
+        { name: "智能家電", value: 25, color: "#10b981" },
+        { name: "居家生活", value: 20, color: "#8b5cf6" },
+        { name: "旅行配件", value: 10, color: "#f59e0b" }
+      ];
+
+      // --- 輔助函式 ---
+      const formatCurrency = (val) => {
+        return new Intl.NumberFormat("zh-TW", { style: "currency", currency: "TWD", maximumFractionDigits: 0 }).format(val);
+      };
+
+      // --- 組件 ---
+      function Sidebar({ currentTab, setCurrentTab, isCollapsed, setIsCollapsed }) {
+        const menuItems = [
+          { id: "dashboard", label: "數據總覽", icon: "bi-grid-1x2-fill" },
+          { id: "orders", label: "訂單管理", icon: "bi-bag-check" },
+          { id: "settings", label: "系統設定", icon: "bi-gear" }
+        ];
+
+        return (
+          <aside className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
+            <div className="sidebar-brand">
+              <div className="brand-icon">
+                <i className="bi bi-shop"></i>
+              </div>
+              <span className="brand-name">Apex Control</span>
+            </div>
+
+            <ul className="sidebar-menu">
+              {menuItems.map((item) => (
+                <li key={item.id}>
+                  <a
+                    href={`#${item.id}`}
+                    className={`menu-item ${currentTab === item.id ? "active" : ""}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCurrentTab(item.id);
+                    }}
+                  >
+                    <i className={`bi ${item.icon}`}></i>
+                    <span className="menu-text">{item.label}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+
+            <div className="sidebar-footer" style={{ justifyContent: isCollapsed ? "center" : "flex-end" }}>
+              <button 
+                className="collapse-btn" 
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                title={isCollapsed ? "展開側邊欄" : "收合側邊欄"}
+              >
+                <i className={`bi ${isCollapsed ? "bi-chevron-right" : "bi-chevron-left"}`}></i>
+              </button>
+            </div>
+          </aside>
+        );
+      }
+
+      function Navbar({ currentTab, onSearchChange, searchValue, toggleMobileSidebar }) {
+        const [isLightMode, setIsLightMode] = React.useState(false);
+        const [notifications, setNotifications] = React.useState(3);
+
+        const toggleTheme = () => {
+          const root = document.documentElement;
+          if (root.classList.contains("light-theme")) {
+            root.classList.remove("light-theme");
+            setIsLightMode(false);
+          } else {
+            root.classList.add("light-theme");
+            setIsLightMode(true);
+          }
+        };
+
+        const getPageTitleText = () => {
+          switch (currentTab) {
+            case "dashboard": return "數據總覽";
+            case "orders": return "訂單管理";
+            case "settings": return "系統設定";
+            default: return "電商後台";
+          }
+        };
+
+        return (
+          <header className="navbar">
+            <div className="navbar-left">
+              <button className="nav-action-btn mobile-menu-btn" style={{ display: "none" }} onClick={toggleMobileSidebar}>
+                <i className="bi bi-list"></i>
+              </button>
+              <h1 className="page-title">{getPageTitleText()}</h1>
+              {currentTab === "orders" && (
+                <div className="search-bar">
+                  <i className="bi bi-search text-secondary"></i>
+                  <input 
+                    type="text" 
+                    placeholder="搜尋訂單編號、顧客姓名..." 
+                    value={searchValue}
+                    onChange={(e) => onSearchChange(e.target.value)}
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="navbar-right">
+              <button className="nav-action-btn" title="切換語言">
+                <i className="bi bi-globe"></i>
+              </button>
+              <button className="nav-action-btn" onClick={toggleTheme} title="切換主題">
+                <i className={`bi ${isLightMode ? "bi-moon" : "bi-sun"}`}></i>
+              </button>
+              <button className="nav-action-btn" onClick={() => setNotifications(0)} title="通知">
+                <i className="bi bi-bell"></i>
+                {notifications > 0 && <span className="badge-dot"></span>}
+              </button>
+
+              <div className="user-profile">
+                <img 
+                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" 
+                  alt="Avatar" 
+                  className="user-avatar"
+                />
+                <div className="user-info">
+                  <span className="user-name">林思宇</span>
+                  <span className="user-role">系統管理員</span>
+                </div>
+              </div>
+            </div>
+          </header>
+        );
+      }
+
+      function StatCard({ label, value, change, isUp, iconClass, glowColor }) {
+        return (
+          <div className="dashboard-card" style={{ position: "relative" }}>
+            <div className="stat-card-glow" style={{ background: glowColor }} />
+            <div className="stat-card-content">
+              <div className="stat-info">
+                <span className="stat-label">{label}</span>
+                <span className="stat-value">{value}</span>
+                {change && (
+                  <div className={`stat-change ${isUp ? "up" : "down"}`}>
+                    <i className={`bi ${isUp ? "bi-arrow-up-right" : "bi-arrow-down-right"}`}></i>
+                    <span>{change}</span>
+                    <span style={{ color: "var(--text-muted)", fontWeight: "normal", marginLeft: "4px" }}>較上週</span>
+                  </div>
+                )}
+              </div>
+              <div className="stat-icon-box" style={{ 
+                color: "white",
+                background: glowColor
+              }}>
+                <i className={`bi ${iconClass}`} style={{ fontSize: "20px" }}></i>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      function Dashboard({ orders }) {
+        const [activeTooltip, setActiveTooltip] = React.useState(null);
+
+        const nonCancelledOrders = orders.filter(o => o.status !== "cancelled");
+        const totalRevenue = nonCancelledOrders.reduce((sum, o) => sum + o.amount, 0);
+        const totalOrdersCount = orders.length;
+        const pendingShipments = orders.filter(o => o.status === "pending" || o.status === "shipping").length;
+        const averageOrderValue = nonCancelledOrders.length > 0 ? Math.round(totalRevenue / nonCancelledOrders.length) : 0;
+
+        const chartWidth = 600;
+        const chartHeight = 220;
+        const paddingX = 40;
+        const paddingY = 30;
+
+        const maxVal = Math.max(...mockSalesData.map(d => d.revenue));
+        const minVal = Math.min(...mockSalesData.map(d => d.revenue)) * 0.8;
+
+        const getCoordinates = () => {
+          const points = [];
+          const count = mockSalesData.length;
+          mockSalesData.forEach((d, i) => {
+            const x = paddingX + (i * (chartWidth - 2 * paddingX) / (count - 1));
+            const y = chartHeight - paddingY - ((d.revenue - minVal) / (maxVal - minVal) * (chartHeight - 2 * paddingY));
+            points.push({ x, y, data: d });
+          });
+          return points;
+        };
+
+        const coordinates = getCoordinates();
+        const linePath = coordinates.reduce((path, p, i) => i === 0 ? `M ${p.x} ${p.y}` : `${path} L ${p.x} ${p.y}`, "");
+        const areaPath = coordinates.length > 0 ? `${linePath} L ${coordinates[coordinates.length - 1].x} ${chartHeight - paddingY} L ${coordinates[0].x} ${chartHeight - paddingY} Z` : "";
+
+        const donutRadius = 50;
+        const donutCircumference = 2 * Math.PI * donutRadius;
+        let accumulatedPercentage = 0;
+
+        return (
+          <div className="content-container">
+            <div className="stats-grid">
+              <StatCard 
+                label="總銷售營收" 
+                value={formatCurrency(totalRevenue)} 
+                change="+14.8%" 
+                isUp={true} 
+                iconClass="bi-currency-dollar"
+                glowColor="linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)"
+              />
+              <StatCard 
+                label="總訂單件數" 
+                value={`${totalOrdersCount} 筆`} 
+                change="+8.2%" 
+                isUp={true} 
+                iconClass="bi-bag"
+                glowColor="linear-gradient(135deg, #10b981 0%, #059669 100%)"
+              />
+              <StatCard 
+                label="待出貨訂單" 
+                value={`${pendingShipments} 筆`} 
+                change={pendingShipments > 0 ? "急需處理" : "已全部處理"} 
+                isUp={pendingShipments > 0 ? false : true} 
+                iconClass="bi-truck"
+                glowColor="linear-gradient(135deg, #f59e0b 0%, #d97706 100%)"
+              />
+              <StatCard 
+                label="平均客單價 (AOV)" 
+                value={formatCurrency(averageOrderValue)} 
+                change="+4.5%" 
+                isUp={true} 
+                iconClass="bi-graph-up-arrow"
+                glowColor="linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)"
+              />
+            </div>
+
+            <div className="charts-grid">
+              <div className="dashboard-card">
+                <div className="card-header">
+                  <span className="card-title">
+                    <i className="bi bi-activity text-secondary" style={{ marginRight: "4px" }}></i>
+                    營收成長趨勢圖 (近 7 日)
+                  </span>
+                  <span style={{ fontSize: "12px", color: "var(--text-secondary)", fontWeight: "500" }}>單位：TWD</span>
+                </div>
+
+                <div className="chart-container">
+                  <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="chart-svg">
+                    <defs>
+                      <linearGradient id="chart-gradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="var(--accent-color)" stopOpacity="0.25" />
+                        <stop offset="100%" stopColor="var(--accent-color)" stopOpacity="0.00" />
+                      </linearGradient>
+                    </defs>
+
+                    {[0, 0.25, 0.5, 0.75, 1].map((ratio, index) => {
+                      const y = paddingY + ratio * (chartHeight - 2 * paddingY);
+                      const gridVal = maxVal - ratio * (maxVal - minVal);
+                      return (
+                        <g key={index}>
+                          <line x1={paddingX} y1={y} x2={chartWidth - paddingX} y2={y} className="chart-grid-line" />
+                          <text x={paddingX - 10} y={y + 4} fill="var(--text-muted)" fontSize="9" textAnchor="end">{Math.round(gridVal / 1000)}k</text>
+                        </g>
+                      );
+                    })}
+
+                    {areaPath && <path d={areaPath} className="chart-path-area" />}
+                    {linePath && <path d={linePath} className="chart-path-line" />}
+
+                    {coordinates.map((p, i) => (
+                      <circle
+                        key={i}
+                        cx={p.x}
+                        cy={p.y}
+                        r="5"
+                        className="chart-dot"
+                        onMouseEnter={(e) => {
+                          const rect = e.target.getBoundingClientRect();
+                          const containerRect = e.target.ownerSVGElement.parentNode.getBoundingClientRect();
+                          setActiveTooltip({
+                            x: rect.left - containerRect.left + rect.width / 2,
+                            y: rect.top - containerRect.top,
+                            date: p.data.date,
+                            revenue: p.data.revenue,
+                            orders: p.data.orders
+                          });
+                        }}
+                        onMouseLeave={() => setActiveTooltip(null)}
+                      />
+                    ))}
+
+                    {coordinates.map((p, i) => (
+                      <text key={i} x={p.x} y={chartHeight - 10} fill="var(--text-secondary)" fontSize="10" textAnchor="middle" fontWeight="500">{p.data.date}</text>
+                    ))}
+                  </svg>
+
+                  {activeTooltip && (
+                    <div className="chart-tooltip" style={{ left: `${activeTooltip.x}px`, top: `${activeTooltip.y}px`, opacity: 1 }}>
+                      <div className="tooltip-title">{activeTooltip.date}</div>
+                      <div className="tooltip-value">{formatCurrency(activeTooltip.revenue)}</div>
+                      <div style={{ color: "var(--text-secondary)", fontSize: "10px", marginTop: "2px" }}>訂單數: {activeTooltip.orders} 筆</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="dashboard-card">
+                <div className="card-header">
+                  <span className="card-title">品類銷售佔比</span>
+                </div>
+                <div className="donut-container">
+                  <svg viewBox="0 0 120 120" className="donut-svg">
+                    <circle cx="60" cy="60" r={donutRadius} className="donut-track" />
+                    {mockCategoryData.map((cat, i) => {
+                      const strokeDashoffset = donutCircumference - (cat.value / 100) * donutCircumference;
+                      const strokeDasharray = `${donutCircumference} ${donutCircumference}`;
+                      const rotation = (accumulatedPercentage / 100) * 360;
+                      accumulatedPercentage += cat.value;
+                      return (
+                        <circle
+                          key={i}
+                          cx="60"
+                          cy="60"
+                          r={donutRadius}
+                          className="donut-segment"
+                          stroke={cat.color}
+                          strokeDasharray={strokeDasharray}
+                          strokeDashoffset={strokeDashoffset}
+                          transform={`rotate(${rotation} 60 60)`}
+                        />
+                      );
+                    })}
+                  </svg>
+                  <div className="donut-center-text">
+                    <span className="donut-center-val">100%</span>
+                    <span className="donut-center-lbl">品類總計</span>
+                  </div>
+                </div>
+                <div className="donut-legend">
+                  {mockCategoryData.map((cat, i) => (
+                    <div key={i} className="legend-item">
+                      <span className="legend-color" style={{ backgroundColor: cat.color }}></span>
+                      <span>{cat.name} ({cat.value}%)</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="dashboard-card">
+              <div className="card-header">
+                <span className="card-title">最新交易動態</span>
+              </div>
+              <div className="table-wrapper">
+                <table className="custom-table">
+                  <thead>
+                    <tr>
+                      <th>訂單編號</th>
+                      <th>顧客名稱</th>
+                      <th>交易日期</th>
+                      <th>付款狀態</th>
+                      <th>配送狀態</th>
+                      <th>交易金額</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {orders.slice(0, 3).map((order) => (
+                      <tr key={order.id}>
+                        <td><span className="order-id">{order.id}</span></td>
+                        <td>
+                          <div className="customer-cell">
+                            <span className="customer-avatar-txt">{order.customer[0]}</span>
+                            <span>{order.customer}</span>
+                          </div>
+                        </td>
+                        <td>{order.date}</td>
+                        <td>
+                          <span className={`payment-indicator ${order.payment}`}>
+                            {order.payment === "paid" && "● 已付款"}
+                            {order.payment === "unpaid" && "○ 未付款"}
+                            {order.payment === "refunded" && "◌ 已退款"}
+                          </span>
+                        </td>
+                        <td>
+                          <span className={`status-badge ${order.status}`}>
+                            <span className="badge-pulse"></span>
+                            {order.status === "pending" && "待處理"}
+                            {order.status === "shipping" && "出貨中"}
+                            {order.status === "shipped" && "已出貨"}
+                            {order.status === "cancelled" && "已取消"}
+                          </span>
+                        </td>
+                        <td><span style={{ fontWeight: 700 }}>{formatCurrency(order.amount)}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      function OrderModal({ order, onClose, onSave }) {
+        const [status, setStatus] = React.useState(order.status);
+        const [payment, setPayment] = React.useState(order.payment);
+
+        return (
+          <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <button className="modal-close" onClick={onClose}>
+                <i className="bi bi-x-lg"></i>
+              </button>
+              <h3 className="modal-title">
+                <i className="bi bi-cart3 text-secondary"></i>
+                訂單明細 - <span className="order-id">{order.id}</span>
+              </h3>
+              <div className="modal-body">
+                <div style={{ 
+                  backgroundColor: "rgba(255, 255, 255, 0.03)", 
+                  padding: "16px", 
+                  borderRadius: "var(--border-radius-md)",
+                  border: "1px solid var(--border-color)",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px"
+                }}>
+                  <div style={{ fontSize: "14px" }}><i className="bi bi-person text-muted" style={{ marginRight: "6px" }}></i><b>顧客姓名：</b>{order.customer}</div>
+                  <div style={{ fontSize: "14px" }}><i className="bi bi-envelope text-muted" style={{ marginRight: "6px" }}></i><b>電子郵件：</b>{order.email}</div>
+                  <div style={{ fontSize: "14px" }}><i className="bi bi-telephone text-muted" style={{ marginRight: "6px" }}></i><b>聯絡電話：</b>{order.phone}</div>
+                  <div style={{ fontSize: "14px" }}><i className="bi bi-geo-alt text-muted" style={{ marginRight: "6px" }}></i><b>配送地址：</b>{order.address}</div>
+                </div>
+
+                <div className="modal-field">
+                  <label>購買商品清單</label>
+                  <div style={{ border: "1px solid var(--border-color)", borderRadius: "var(--border-radius-sm)" }}>
+                    {order.items.map((item, index) => (
+                      <div key={index} style={{ display: "flex", justifyContent: "space-between", padding: "12px 16px", borderBottom: index < order.items.length - 1 ? "1px solid var(--border-color)" : "none", fontSize: "13px" }}>
+                        <div><span>{item.name}</span><span style={{ color: "var(--text-muted)", marginLeft: "8px" }}>x {item.quantity}</span></div>
+                        <span style={{ fontWeight: 700, color: "var(--accent-light)" }}>{formatCurrency(item.price * item.quantity)}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", padding: "12px 16px 0 16px", fontWeight: 700, fontSize: "15px" }}>
+                    <span>應付總額</span>
+                    <span style={{ fontSize: "18px" }}>{formatCurrency(order.amount)}</span>
+                  </div>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                  <div className="modal-field">
+                    <label>付款狀態</label>
+                    <select value={payment} onChange={(e) => setPayment(e.target.value)}>
+                      <option value="paid">已付款</option>
+                      <option value="unpaid">未付款</option>
+                      <option value="refunded">已退款</option>
+                    </select>
+                  </div>
+                  <div className="modal-field">
+                    <label>出貨管理</label>
+                    <select value={status} onChange={(e) => setStatus(e.target.value)}>
+                      <option value="pending">待處理</option>
+                      <option value="shipping">出貨中</option>
+                      <option value="shipped">已出貨</option>
+                      <option value="cancelled">已取消</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button className="action-btn" onClick={onClose}>取消</button>
+                <button className="action-btn btn-primary" onClick={() => onSave(order.id, { status, payment })}>儲存變更</button>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      function Orders({ orders, setOrders, searchValue, setSearchValue }) {
+        const [statusFilter, setStatusFilter] = React.useState("all");
+        const [paymentFilter, setPaymentFilter] = React.useState("all");
+        const [currentPage, setCurrentPage] = React.useState(1);
+        const itemsPerPage = 5;
+
+        const [selectedOrder, setSelectedOrder] = React.useState(null);
+
+        const handleResetFilters = () => {
+          setStatusFilter("all");
+          setPaymentFilter("all");
+          setSearchValue("");
+          setCurrentPage(1);
+        };
+
+        const filteredOrders = orders.filter((order) => {
+          const matchesSearch = 
+            order.id.toLowerCase().includes(searchValue.toLowerCase()) ||
+            order.customer.toLowerCase().includes(searchValue.toLowerCase()) ||
+            order.items.some(item => item.name.toLowerCase().includes(searchValue.toLowerCase()));
+          const matchesStatus = statusFilter === "all" || order.status === statusFilter;
+          const matchesPayment = paymentFilter === "all" || order.payment === paymentFilter;
+          return matchesSearch && matchesStatus && matchesPayment;
+        });
+
+        const totalPages = Math.ceil(filteredOrders.length / itemsPerPage) || 1;
+        const indexOfLastItem = currentPage * itemsPerPage;
+        const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+        const currentItems = filteredOrders.slice(indexOfFirstItem, indexOfLastItem);
+
+        const handleSaveOrder = (orderId, updatedFields) => {
+          const updatedOrders = orders.map(o => o.id === orderId ? { ...o, ...updatedFields } : o);
+          setOrders(updatedOrders);
+          setSelectedOrder(null);
+        };
+
+        const handleAddMockOrder = () => {
+          const names = ["林書豪", "蔡英文", "柯文哲", "郭台銘", "周杰倫", "蔡依林"];
+          const products = [
+            { name: "USB-C To HDMI 轉接器", price: 890 },
+            { name: "無線垂直靜音人體工學滑鼠", price: 1890 },
+            { name: "可折疊金屬筆電散熱支架", price: 1200 },
+            { name: "GaN 100W 四孔充電頭", price: 2100 }
+          ];
+          const randomName = names[Math.floor(Math.random() * names.length)];
+          const randomProduct = products[Math.floor(Math.random() * products.length)];
+          const qty = Math.floor(Math.random() * 2) + 1;
+          const newId = `ORD-${1000 + orders.length + 1}`;
+          const formattedDate = new Date().toISOString().split("T")[0];
+
+          const newOrder = {
+            id: newId,
+            customer: randomName,
+            email: `${randomName}@mock.com`,
+            phone: "0999-999-999",
+            address: "新北市板橋區中山路一段 161 號",
+            date: formattedDate,
+            amount: randomProduct.price * qty,
+            status: "pending",
+            payment: "paid",
+            items: [{ name: randomProduct.name, quantity: qty, price: randomProduct.price }]
+          };
+
+          setOrders([newOrder, ...orders]);
+          setCurrentPage(1);
+        };
+
+        return (
+          <div className="content-container">
+            <div className="filter-bar">
+              <div className="filter-group">
+                <div className="search-bar" style={{ display: "flex", width: "260px" }}>
+                  <input 
+                    type="text" 
+                    placeholder="搜尋編號、姓名、商品..." 
+                    value={searchValue}
+                    onChange={(e) => {
+                      setSearchValue(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                  />
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <span className="filter-label">配送狀態</span>
+                  <select className="filter-select" value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}>
+                    <option value="all">全部狀態</option>
+                    <option value="pending">待處理</option>
+                    <option value="shipping">出貨中</option>
+                    <option value="shipped">已出貨</option>
+                    <option value="cancelled">已取消</option>
+                  </select>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <span className="filter-label">付款狀態</span>
+                  <select className="filter-select" value={paymentFilter} onChange={(e) => { setPaymentFilter(e.target.value); setCurrentPage(1); }}>
+                    <option value="all">全部狀態</option>
+                    <option value="paid">已付款</option>
+                    <option value="unpaid">未付款</option>
+                    <option value="refunded">已退款</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: "flex", gap: "10px" }}>
+                <button className="action-btn" onClick={handleResetFilters}>
+                  <i className="bi bi-arrow-counterclockwise"></i>重設
+                </button>
+                <button className="action-btn btn-primary" onClick={handleAddMockOrder}>
+                  <i className="bi bi-plus-lg"></i>模擬新訂單
+                </button>
+              </div>
+            </div>
+
+            <div className="dashboard-card" style={{ padding: "0 0 24px 0" }}>
+              <div className="card-header" style={{ padding: "24px 24px 12px 24px", marginBottom: "0" }}>
+                <span className="card-title">訂單清單 ({filteredOrders.length} 筆)</span>
+              </div>
+              <div className="table-wrapper">
+                <table className="custom-table">
+                  <thead>
+                    <tr>
+                      <th style={{ paddingLeft: "24px" }}>訂單編號</th>
+                      <th>顧客名稱</th>
+                      <th>訂單日期</th>
+                      <th>商品內容</th>
+                      <th>付款狀態</th>
+                      <th>配送狀態</th>
+                      <th>總金額</th>
+                      <th style={{ paddingRight: "24px", textAlign: "center" }}>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentItems.length > 0 ? (
+                      currentItems.map((order) => (
+                        <tr key={order.id}>
+                          <td style={{ paddingLeft: "24px" }}><span className="order-id">{order.id}</span></td>
+                          <td>
+                            <div className="customer-cell">
+                              <span className="customer-avatar-txt">{order.customer[0]}</span>
+                              <span>{order.customer}</span>
+                            </div>
+                          </td>
+                          <td>{order.date}</td>
+                          <td style={{ maxWidth: "250px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            <span>
+                              {order.items[0].name}
+                              {order.items.length > 1 ? ` 等 ${order.items.length} 件商品` : ` x ${order.items[0].quantity}`}
+                            </span>
+                          </td>
+                          <td>
+                            <span className={`payment-indicator ${order.payment}`}>
+                              {order.payment === "paid" && "● 已付款"}
+                              {order.payment === "unpaid" && "○ 未付款"}
+                              {order.payment === "refunded" && "◌ 已退款"}
+                            </span>
+                          </td>
+                          <td>
+                            <span className={`status-badge ${order.status}`}>
+                              <span className="badge-pulse"></span>
+                              {order.status === "pending" && "待處理"}
+                              {order.status === "shipping" && "出貨中"}
+                              {order.status === "shipped" && "已出貨"}
+                              {order.status === "cancelled" && "已取消"}
+                            </span>
+                          </td>
+                          <td><span style={{ fontWeight: 700 }}>{formatCurrency(order.amount)}</span></td>
+                          <td style={{ paddingRight: "24px", textAlign: "center" }}>
+                            <button className="action-btn" onClick={() => setSelectedOrder(order)} style={{ margin: "0 auto" }}>
+                              <i className="bi bi-pencil-square"></i>編輯狀態
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="8" style={{ textAlign: "center", padding: "48px 0" }}>
+                          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "12px", color: "var(--text-secondary)" }}>
+                            <i className="bi bi-exclamation-triangle text-muted" style={{ fontSize: "28px" }}></i>
+                            <span>沒有找到符合篩選條件的訂單</span>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {filteredOrders.length > 0 && (
+                <div className="pagination" style={{ padding: "0 24px" }}>
+                  <span className="page-info">
+                    顯示第 {indexOfFirstItem + 1} 至 {Math.min(indexOfLastItem, filteredOrders.length)} 筆，共 {filteredOrders.length} 筆
+                  </span>
+                  <div className="pagination-controls">
+                    <button className="pagination-btn" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>上一頁</button>
+                    <span style={{ display: "flex", alignItems: "center", padding: "0 12px", fontSize: "14px", fontWeight: "600" }}>{currentPage} / {totalPages}</span>
+                    <button className="pagination-btn" onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>下一頁</button>
+                  </div>
+                </div>
+              )}
+            </div>
+            {selectedOrder && (
+              <OrderModal 
+                order={selectedOrder}
+                onClose={() => setSelectedOrder(null)}
+                onSave={handleSaveOrder}
+              />
+            )}
+          </div>
+        );
+      }
+
+      function App() {
+        const [currentTab, setCurrentTab] = React.useState("dashboard");
+        const [orders, setOrders] = React.useState(mockOrders);
+        const [searchValue, setSearchValue] = React.useState("");
+        const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState(false);
+        const [isMobileSidebarActive, setIsMobileSidebarActive] = React.useState(false);
+
+        const [shopName, setShopName] = React.useState("Apex 潮玩數位旗艦店");
+        const [shopEmail, setShopEmail] = React.useState("service@apex-studio.tw");
+        const [shopPhone, setShopPhone] = React.useState("02-2345-6789");
+
+        const toggleMobileSidebar = () => {
+          setIsMobileSidebarActive(!isMobileSidebarActive);
+        };
+
+        const renderContent = () => {
+          switch (currentTab) {
+            case "dashboard":
+              return <Dashboard orders={orders} />;
+            case "orders":
+              return (
+                <Orders 
+                  orders={orders} 
+                  setOrders={setOrders} 
+                  searchValue={searchValue}
+                  setSearchValue={setSearchValue}
+                />
+              );
+            case "settings":
+              return (
+                <div className="content-container">
+                  <div className="dashboard-card">
+                    <div className="card-header">
+                      <span className="card-title">
+                        <i className="bi bi-gear" style={{ marginRight: "4px" }}></i>
+                        商店基本設定
+                      </span>
+                    </div>
+                    <div className="modal-body" style={{ marginTop: "10px" }}>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "20px" }}>
+                        <div className="modal-field">
+                          <label>商店名稱</label>
+                          <input type="text" value={shopName} onChange={(e) => setShopName(e.target.value)} />
+                        </div>
+                        <div className="modal-field">
+                          <label>客服信箱</label>
+                          <input type="email" value={shopEmail} onChange={(e) => setShopEmail(e.target.value)} />
+                        </div>
+                        <div className="modal-field">
+                          <label>聯絡電話</label>
+                          <input type="text" value={shopPhone} onChange={(e) => setShopPhone(e.target.value)} />
+                        </div>
+                        <div className="modal-field">
+                          <label>商店幣別</label>
+                          <select defaultValue="TWD">
+                            <option value="TWD">TWD - 新台幣</option>
+                            <option value="USD">USD - 美元</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "16px" }}>
+                        <button className="action-btn btn-primary" onClick={() => alert("商店基本設定已儲存！")}>
+                          <i className="bi bi-floppy"></i>
+                          儲存商店設定
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "24px" }}>
+                    <div className="dashboard-card">
+                      <div className="card-header">
+                        <span className="card-title">
+                          <i className="bi bi-bell-fill" style={{ marginRight: "4px" }}></i>
+                          即時通知設定
+                        </span>
+                      </div>
+                      <div className="modal-body">
+                        <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <div>
+                              <div style={{ fontSize: "14px", fontWeight: "600" }}>新訂單 Email 通知</div>
+                              <div style={{ fontSize: "12px", color: "var(--text-secondary)" }}>當顧客下單後自動傳送通知</div>
+                            </div>
+                            <input type="checkbox" defaultChecked style={{ width: "20px", height: "20px", cursor: "pointer" }} />
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <div>
+                              <div style={{ fontSize: "14px", fontWeight: "600" }}>低庫存警告</div>
+                              <div style={{ fontSize: "12px", color: "var(--text-secondary)" }}>商品庫存低於 5 件時系統提示</div>
+                            </div>
+                            <input type="checkbox" defaultChecked style={{ width: "20px", height: "20px", cursor: "pointer" }} />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="dashboard-card">
+                      <div className="card-header">
+                        <span className="card-title">
+                          <i className="bi bi-shield-lock" style={{ marginRight: "4px" }}></i>
+                          安全性與金鑰管理
+                        </span>
+                      </div>
+                      <div className="modal-body">
+                        <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                          <div>
+                            <div style={{ fontSize: "14px", fontWeight: "600" }}>管理員雙重身分驗證 (2FA)</div>
+                            <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "8px" }}>已啟用 Authenticator 安全保護</div>
+                            <button className="action-btn" style={{ fontSize: "12px" }}>重新設定</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            default:
+              return <Dashboard orders={orders} />;
+          }
+        };
+
+        return (
+          <div className={`app-container ${isMobileSidebarActive ? "sidebar-open" : ""}`}>
+            {isMobileSidebarActive && (
+              <div 
+                onClick={toggleMobileSidebar} 
+                style={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100vw",
+                  height: "100vh",
+                  backgroundColor: "rgba(0,0,0,0.5)",
+                  zIndex: 1000
+                }}
+              />
+            )}
+
+            <Sidebar 
+              currentTab={currentTab} 
+              setCurrentTab={(tab) => {
+                setCurrentTab(tab);
+                setIsMobileSidebarActive(false);
+              }}
+              isCollapsed={isSidebarCollapsed}
+              setIsCollapsed={setIsSidebarCollapsed}
+            />
+
+            <div className="main-wrapper">
+              <Navbar 
+                currentTab={currentTab} 
+                searchValue={searchValue}
+                onSearchChange={setSearchValue}
+                toggleMobileSidebar={toggleMobileSidebar}
+              />
+              {renderContent()}
+            </div>
+          </div>
+        );
+      }
+
+      // Mount Root
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
+    </script>
+  </body>
+</html>
